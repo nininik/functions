@@ -832,9 +832,6 @@ html, body { height: 100%; overflow: hidden; font-family: 'Noto Sans KR', sans-s
     <a href="https://www.buymeacoffee.com" target="_blank" class="nav-btn" style="display:flex;align-items:center;gap:5px;text-decoration:none;">
       ☕ 커피 사주기
     </a>
-    <button id="adminNavBtn" class="nav-btn" onclick="toggleAdmin()" style="display:flex;align-items:center;gap:5px;">
-      🔐 관리자
-    </button>
     <button class="nav-btn primary" onclick="openReportModal()" style="display:flex;align-items:center;gap:5px;">
       📍 수영장 제보하기
     </button>
@@ -1066,28 +1063,22 @@ let typeFilter = 'all', currentTab = 'list';
 let map = null, selectedIdx = null;
 let subCardPool = null;
 
-// 관리자 모드
-const ADMIN_PASSWORD = 'swim1234';
+// 관리자 모드 — 어드민 페이지 로그인과 localStorage로 연동
 let isAdmin = false;
-function toggleAdmin() {
-  if (isAdmin) {
-    isAdmin = false;
-    document.getElementById('adminNavBtn').textContent = '🔐 관리자';
-    document.getElementById('adminNavBtn').style.background = 'rgba(255,255,255,0.14)';
-    showToast('관리자 모드가 해제됐습니다.');
-    if (subCardPool) { const p = subCardPool; closeSubCard(); openSubCard(p); }
-  } else {
-    const pw = prompt('관리자 비밀번호를 입력하세요:');
-    if (pw === null) return;
-    if (pw === ADMIN_PASSWORD) {
-      isAdmin = true;
-      document.getElementById('adminNavBtn').textContent = '🔓 관리자 ON';
-      document.getElementById('adminNavBtn').style.background = 'rgba(239,68,68,0.35)';
-      showToast('관리자 모드 활성화 ✅');
-      if (subCardPool) { const p = subCardPool; closeSubCard(); openSubCard(p); }
-    } else {
-      alert('비밀번호가 올바르지 않습니다.');
-    }
+function checkAdminSession() {
+  if (sessionStorage.getItem('swimAdminMode') === 'on') {
+    isAdmin = true;
+    console.log('[SwimMap] 관리자 세션 감지됨.');
+  }
+}
+checkAdminSession();
+
+// 관리자 세션 해제 (어드민 페이지 로그아웃 시 연동)
+function refreshAdminSession() {
+  const was = isAdmin;
+  checkAdminSession();
+  if (was !== isAdmin && subCardPool) {
+    const p = subCardPool; closeSubCard(); openSubCard(p);
   }
 }
 
