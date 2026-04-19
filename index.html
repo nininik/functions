@@ -1063,24 +1063,8 @@ let typeFilter = 'all', currentTab = 'list';
 let map = null, selectedIdx = null;
 let subCardPool = null;
 
-// 관리자 모드 — 어드민 페이지 로그인과 localStorage로 연동
+// 관리자 모드
 let isAdmin = false;
-function checkAdminSession() {
-  if (sessionStorage.getItem('swimAdminMode') === 'on') {
-    isAdmin = true;
-    console.log('[SwimMap] 관리자 세션 감지됨.');
-  }
-}
-checkAdminSession();
-
-// 관리자 세션 해제 (어드민 페이지 로그아웃 시 연동)
-function refreshAdminSession() {
-  const was = isAdmin;
-  checkAdminSession();
-  if (was !== isAdmin && subCardPool) {
-    const p = subCardPool; closeSubCard(); openSubCard(p);
-  }
-}
 
 // Likes
 let likes   = JSON.parse(localStorage.getItem('swim_likes') || '{}');
